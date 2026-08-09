@@ -1,5 +1,5 @@
 {
-  "name": "REPO-NAME",
+  "name": "dungeon-master-helper",
   "version": "1.0.0",
   "description": "",
   "scripts": {
@@ -13,16 +13,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kondratkoj/REPO-NAME.git"
+    "url": "git+https://github.com/kondratkoj/dm-helper.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "bugs": {
-    "url": "https://github.com/kondratkoj/REPO-NAME/issues"
+    "url": "https://github.com/kondratkoj/dm-helper/issues"
   },
-  "homepage": "https://github.com/kondratkoj/REPO-NAME/readme",
+  "homepage": "https://github.com/kondratkoj/dm-helper",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "css-loader": "^7.1.4",
