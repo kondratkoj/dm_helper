@@ -1,14 +1,25 @@
 import { characters } from "./characters.js";
 import { monsters } from "./monsters.js";
-import { initiativeOrder } from "./initiative.js";
+import {
+  initiativeOrder,
+  addToInitiative,
+  clearInitiative,
+  removeFromInitiative,
+} from "./initiative.js";
 
-//-------------THIS IS FOR INITIALIZING DISPLAY AND STARTING SHIT--------------
+//--------------------THIS IS FOR INITIALIZING DISPLAY AND SHIT--------------------
 export function initDisplay() {
   const box = document.querySelectorAll(".panel-header");
   let sizeButtons = document.querySelectorAll(".toggle-size");
+  const clearBtn = document.querySelector(".clear-init");
   const initiativeContainer = document.querySelector(
     '[data-panel="initiative"]',
   );
+
+  clearBtn.addEventListener("click", () => {
+    clearInitiative();
+    renderCards();
+  });
 
   sizeButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -34,7 +45,7 @@ export function initDisplay() {
   renderCards();
 }
 
-//--------THIS IS FOR DRAGGING THE CARDS INTO INITIATIVE---------
+//---------------------THIS IS FOR DRAGGING THE CARDS INTO INITIATIVE--------------------
 
 function dragStartHandler(e) {
   e.dataTransfer.setData("type", e.currentTarget.dataset.type);
@@ -58,12 +69,12 @@ function dropHandler(e) {
     entity = monsters.find((monster) => monster.id === id);
   }
 
-  initiativeOrder.push(entity);
+  addToInitiative(entity);
 
   renderCards();
 }
 
-//---------THIS IS FOR RENDERING THE CARDS IN THE PANELS---------
+//--------------------THIS IS FOR RENDERING THE CARDS IN THE PANELS--------------------
 
 function renderCards() {
   const characterContainer = document.querySelector(
@@ -92,8 +103,40 @@ function renderCards() {
     monsterContainer.appendChild(card);
   });
 
+  initiativeOrder.sort((a, b) => b.initiative - a.initiative);
+
   initiativeOrder.forEach((creature) => {
     const card = createCard(creature, "creature");
+
+    const removeBtn = document.createElement("button");
+
+    const removeSVG = `
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+      <path
+        d="M5 5L19 19M5 19L19 5"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  `;
+
+    removeBtn.innerHTML = removeSVG;
+    removeBtn.classList.add("remove-button");
+    removeBtn.dataset.id = creature.id;
+
+    removeBtn.addEventListener("click", (e) => {
+      removeFromInitiative(e.currentTarget.dataset.id);
+      renderCards();
+      console.log("button worked at least");
+    });
+
+    card.appendChild(removeBtn);
     initiativeContainer.appendChild(card);
   });
 }
@@ -110,11 +153,15 @@ function createCard(entity, type) {
   const ac = document.createElement("p");
   ac.textContent = `AC: ${entity.ac}`;
 
-  const hp = document.createElement("p");
-  hp.textContent = `HP: ${entity.hp}`;
+  const currentHp = document.createElement("p");
+  currentHp.textContent = `HP: ${entity.hp.current} / ${entity.hp.max}`;
+
+  const initiative = document.createElement("p");
+  initiative.textContent = `Initiative: ${entity.initiative}`;
 
   card.appendChild(name);
-  card.appendChild(hp);
+  card.appendChild(initiative);
+  card.appendChild(currentHp);
   card.appendChild(ac);
   card.draggable = "true";
   card.addEventListener("dragstart", dragStartHandler);
@@ -122,13 +169,13 @@ function createCard(entity, type) {
   return card;
 }
 
-//--------------THIS IS FOR MOVING THE CARDS AROUND--------------
+//---------------------THIS IS FOR MOVING THE CARDS AROUND---------------------
 let startX = 0;
 let startY = 0;
 let activePanel = null;
 
 function mouseDown(e) {
-  if (e.target.closest(".toggle-size")) {
+  if (e.target.closest(".toggle-size") || e.target.closest(".clear-init")) {
     return;
   }
 

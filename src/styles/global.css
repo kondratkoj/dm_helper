@@ -28,6 +28,8 @@ body {
   background: var(--parchment);
 }
 
+/* ------------------- Styling for the Panels --------------------- */
+
 .panel {
   position: absolute;
   display: flex;
@@ -70,6 +72,8 @@ body {
   gap: 0.5rem;
 }
 
+/* -------------- Styling for the cards inisde the panels --------------- */
+
 .entity-card {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -89,6 +93,36 @@ body {
 .entity-card p {
   margin: 0;
 }
+
+.remove-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: var(--accent-red);
+
+  cursor: pointer;
+}
+
+.remove-button svg {
+  width: 16px;
+  height: 16px;
+
+  pointer-events: none;
+}
+
+.remove-button:hover {
+  transform: scale(1.1);
+}
+
+/* --------------------- Positioning for the Panels ----------------------- */
 
 [data-panel="initiative"] {
   left: 350px;
