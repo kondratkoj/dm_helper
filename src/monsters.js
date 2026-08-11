@@ -4,6 +4,7 @@ class Monster {
   constructor(name) {
     this.id = crypto.randomUUID();
     this.type = "monster";
+    this.context = "monsterLibrary";
 
     this.name = name;
     this.color = "";

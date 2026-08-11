@@ -118,17 +118,20 @@ function renderCards() {
   initiativeContainer.replaceChildren();
 
   characters.forEach((character) => {
-    const card = createCard(character, "character");
+    const card = createCard(character, "characterLibrary");
     characterContainer.appendChild(card);
   });
 
   monsters.forEach((monster) => {
-    const card = createCard(monster, "monster");
+    const card = createCard(monster, "monsterLibrary");
     monsterContainer.appendChild(card);
   });
 
   initiativeOrder.forEach((creature, index) => {
-    const card = createCard(creature, "creature");
+    const initiative = document.createElement("p");
+    initiative.textContent = `Initiative: ${creature.initiative}`;
+
+    const card = createCard(creature, "initiative");
 
     const removeBtn = document.createElement("button");
 
@@ -161,16 +164,18 @@ function renderCards() {
       card.classList.add("active-turn");
     }
 
+    card.appendChild(initiative);
     card.appendChild(removeBtn);
     initiativeContainer.appendChild(card);
   });
 }
 
-function createCard(entity, type) {
+function createCard(entity, context) {
   const card = document.createElement("div");
   card.classList.add("entity-card");
   card.dataset.id = entity.id;
-  card.dataset.type = type;
+  card.dataset.type = entity.type;
+  card.dataset.context = context;
 
   const name = document.createElement("h3");
   name.textContent = entity.name;
@@ -181,11 +186,7 @@ function createCard(entity, type) {
   const currentHp = document.createElement("p");
   currentHp.textContent = `HP: ${entity.hp.current} / ${entity.hp.max}`;
 
-  const initiative = document.createElement("p");
-  initiative.textContent = `Initiative: ${entity.initiative}`;
-
   card.appendChild(name);
-  card.appendChild(initiative);
   card.appendChild(currentHp);
   card.appendChild(ac);
   card.draggable = "true";

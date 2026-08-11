@@ -4,6 +4,7 @@ class Character {
   constructor(name) {
     this.id = crypto.randomUUID();
     this.type = "character";
+    this.context = "chararcterLibrary";
 
     this.name = name;
     this.color = "";

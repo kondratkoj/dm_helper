@@ -31,8 +31,6 @@ export function removeFromInitiative(id) {
   if (index !== -1) {
     initiativeOrder.splice(index, 1);
   }
-
-  console.log("index to remove:", index);
 }
 
 export function nextTurn() {
