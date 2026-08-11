@@ -122,6 +122,10 @@ body {
   transform: scale(1.1);
 }
 
+.active-turn {
+  outline: 3px solid var(--gold);
+}
+
 /* --------------------- Positioning for the Panels ----------------------- */
 
 [data-panel="initiative"] {

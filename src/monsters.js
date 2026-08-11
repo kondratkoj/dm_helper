@@ -32,6 +32,7 @@ class Monster {
 
     this.initiativeModifier = 0;
     this.initiative = 0;
+    this.turn = false;
 
     this.abilities = {
       strength: 10,

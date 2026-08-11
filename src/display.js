@@ -5,19 +5,31 @@ import {
   addToInitiative,
   clearInitiative,
   removeFromInitiative,
+  nextTurn,
+  activeIndex,
+  roundCount,
 } from "./initiative.js";
 
-//--------------------THIS IS FOR INITIALIZING DISPLAY AND SHIT--------------------
+//--------------------THIS IS FOR INITIALIZING DISPLAY AND SHIT--------------------//
+
 export function initDisplay() {
-  const box = document.querySelectorAll(".panel-header");
-  let sizeButtons = document.querySelectorAll(".toggle-size");
+  const panelHeader = document.querySelectorAll(".panel-header");
+  const sizeButtons = document.querySelectorAll(".toggle-size");
   const clearBtn = document.querySelector(".clear-init");
+  const nextTurnBtn = document.querySelector(".next-turn");
   const initiativeContainer = document.querySelector(
     '[data-panel="initiative"]',
   );
 
   clearBtn.addEventListener("click", () => {
     clearInitiative();
+    updateRound();
+    renderCards();
+  });
+
+  nextTurnBtn.addEventListener("click", () => {
+    nextTurn();
+    updateRound();
     renderCards();
   });
 
@@ -35,7 +47,7 @@ export function initDisplay() {
     });
   });
 
-  box.forEach((header) => {
+  panelHeader.forEach((header) => {
     header.addEventListener("mousedown", mouseDown);
   });
 
@@ -45,7 +57,9 @@ export function initDisplay() {
   renderCards();
 }
 
-//---------------------THIS IS FOR DRAGGING THE CARDS INTO INITIATIVE--------------------
+//---------------------THIS IS FOR DRAGGING THE CARDS INTO INITIATIVE--------------------//
+
+const roundText = document.querySelector(".round-count");
 
 function dragStartHandler(e) {
   e.dataTransfer.setData("type", e.currentTarget.dataset.type);
@@ -71,10 +85,20 @@ function dropHandler(e) {
 
   addToInitiative(entity);
 
+  updateRound();
+
   renderCards();
 }
 
-//--------------------THIS IS FOR RENDERING THE CARDS IN THE PANELS--------------------
+function updateRound() {
+  if (roundCount === 0) {
+    roundText.textContent = "";
+  } else {
+    roundText.textContent = `Round ${roundCount}`;
+  }
+}
+
+//--------------------THIS IS FOR RENDERING THE CARDS IN THE PANELS--------------------//
 
 function renderCards() {
   const characterContainer = document.querySelector(
@@ -103,28 +127,26 @@ function renderCards() {
     monsterContainer.appendChild(card);
   });
 
-  initiativeOrder.sort((a, b) => b.initiative - a.initiative);
-
-  initiativeOrder.forEach((creature) => {
+  initiativeOrder.forEach((creature, index) => {
     const card = createCard(creature, "creature");
 
     const removeBtn = document.createElement("button");
 
     const removeSVG = `
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-      <path
-        d="M5 5L19 19M5 19L19 5"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
+    <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    >
+    <path
+    d="M5 5L19 19M5 19L19 5"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    />
     </svg>
-  `;
+    `;
 
     removeBtn.innerHTML = removeSVG;
     removeBtn.classList.add("remove-button");
@@ -133,8 +155,11 @@ function renderCards() {
     removeBtn.addEventListener("click", (e) => {
       removeFromInitiative(e.currentTarget.dataset.id);
       renderCards();
-      console.log("button worked at least");
     });
+
+    if (index === activeIndex) {
+      card.classList.add("active-turn");
+    }
 
     card.appendChild(removeBtn);
     initiativeContainer.appendChild(card);
@@ -169,7 +194,7 @@ function createCard(entity, type) {
   return card;
 }
 
-//---------------------THIS IS FOR MOVING THE CARDS AROUND---------------------
+//---------------------THIS IS FOR MOVING THE CARDS AROUND---------------------//
 let startX = 0;
 let startY = 0;
 let activePanel = null;

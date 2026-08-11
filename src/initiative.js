@@ -1,5 +1,8 @@
 export let initiativeOrder = [];
 
+export let activeIndex = 0;
+export let roundCount = 1;
+
 export function addToInitiative(entity) {
   const combatInstance = structuredClone(entity);
 
@@ -7,11 +10,19 @@ export function addToInitiative(entity) {
   combatInstance.initiative =
     Math.floor(Math.random() * 20) + 1 + combatInstance.initiativeModifier;
 
+  if (initiativeOrder.length === 0) {
+    startInitiative();
+  }
+
   initiativeOrder.push(combatInstance);
+
+  initiativeOrder.sort((a, b) => b.initiative - a.initiative);
 }
 
 export function clearInitiative() {
   initiativeOrder.length = 0;
+  activeIndex = 0;
+  roundCount = 0;
 }
 
 export function removeFromInitiative(id) {
@@ -22,6 +33,20 @@ export function removeFromInitiative(id) {
   }
 
   console.log("index to remove:", index);
+}
+
+export function nextTurn() {
+  if (activeIndex < initiativeOrder.length - 1) {
+    activeIndex++;
+  } else {
+    activeIndex = 0;
+    roundCount++;
+  }
+}
+
+export function startInitiative() {
+  roundCount = 1;
+  activeIndex = 0;
 }
 
 window.initiativeOrder = initiativeOrder;

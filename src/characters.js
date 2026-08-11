@@ -27,6 +27,7 @@ class Character {
     this.proficiencyBonus = 2;
 
     this.initiative = 0;
+    this.turn = false;
 
     this.abilities = {
       strength: 10,
